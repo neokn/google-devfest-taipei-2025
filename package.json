@@ -1,0 +1,25 @@
+{
+    "name": "devfest-taipei-2025",
+    "main": "dist/index.js",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "start": "pnpm run build && node dist/index.js",
+        "dev": "genkit start -- tsx --watch src/index.ts"
+    },
+    "dependencies": {
+        "@genkit-ai/google-genai": "^1.24.0",
+        "@genkit-ai/mcp": "^1.24.0",
+        "discord.js": "^14.25.1",
+        "dotenv": "^17.2.3",
+        "genkit": "^1.24.0"
+    },
+    "devDependencies": {
+        "@types/handlebars": "^4.1.0",
+        "@types/node": "^22.19.0",
+        "genkit-cli": "^1.24.0",
+        "tsx": "^4.20.6",
+        "typescript": "^5.9.3"
+    }
+}
