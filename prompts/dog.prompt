@@ -1,5 +1,5 @@
 ---
-model: googleai/gemini-2.5-flash
+model: googleai/gemini-3-pro-preview
 config:
   temperature: 0.2
   topP: 0.95

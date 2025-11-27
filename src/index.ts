@@ -14,7 +14,7 @@ const patFlow = ai.defineFlow(
     },
     async ({ prompt }) => {
 
-        const { response } = ai.prompt('cat').stream({
+        const { response } = ai.prompt('dog').stream({
             prompt: prompt,
         });
 
