@@ -71,8 +71,8 @@ export const discordFlow = ai.defineFlow(
         }),
         outputSchema: z.string(),
     },
-    async (input) => {
-        const { response } = ai.prompt('discord').stream({
+    async (input, { sendChunk }) => {
+        const { response, stream } = ai.prompt('discord').stream({
             botUserId: input.botUserId,
             prompt: input.prompt,
         }, {
@@ -81,6 +81,11 @@ export const discordFlow = ai.defineFlow(
             messages: input.messages,
             docs: await loadDocuments(),
         });
+        for await (const chunk of stream) {
+            if (chunk.reasoning) {
+                sendChunk(chunk.reasoning);
+            }
+        }
         return (await response).text;
     },
 );

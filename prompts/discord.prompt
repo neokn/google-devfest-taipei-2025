@@ -3,6 +3,8 @@ model: googleai/gemini-2.5-flash
 config:
   temperature: 0.2
   topP: 0.95
+  thinkingConfig:
+    includeThoughts: true
 input:
   schema:
     botUserId: string
