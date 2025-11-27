@@ -16,6 +16,12 @@ async function main() {
                 prompt: userPrompt.content.map((c) => `${c.text}`),
                 messages: historyMessages,
             });
+
+            let content = "";
+            for await (const chunk of resp.stream) {
+                content += chunk;
+                yield content;
+            }
             yield await resp.output;
         });
         await discordService.login();

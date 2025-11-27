@@ -95,25 +95,29 @@ export class DiscordService {
                     root = await message.channel.messages.fetch(history.last()!.reference!.messageId!);
                 }
 
-                const reply = this.replyCallback(message, root, history?.map((m) => m));
-
                 // If already in a thread, reply there
                 if (message.channel.isThread()) {
-                    for await (const msg of reply) {
-                        await message.channel.send(msg);
+                    const sentMessage = await message.channel.send("thinking...");
+                    const reply = this.replyCallback(message, root, history?.map((m) => m));
+                    for await (const chunk of reply) {
+                        await sentMessage.edit(chunk);
                     }
                 } else if (message.inGuild()) {
                     const thread = await message.startThread({
                         name: `Chat with ${message.author.username}`,
                         autoArchiveDuration: 60,
                     });
-                    for await (const msg of reply) {
-                        await thread.send(msg);
+                    const sentMessage = await thread.send("thinking...");
+                    const reply = this.replyCallback(message, root, history?.map((m) => m));
+                    for await (const chunk of reply) {
+                        await sentMessage.edit(chunk);
                     }
                 } else {
                     // Fallback to regular reply (DMs, etc.)
-                    for await (const msg of reply) {
-                        await message.channel.send(msg);
+                    const sentMessage = await message.channel.send("thinking...");
+                    const reply = this.replyCallback(message, root, history?.map((m) => m));
+                    for await (const chunk of reply) {
+                        await sentMessage.edit(chunk);
                     }
                 }
             } catch (error) {
