@@ -1,14 +1,22 @@
 import 'dotenv/config';
-import { DiscordService } from './discord.js';
-import { patFlow } from './genkit.js';
+import { constructHistoryMessage, constructUserPrompt, DiscordService } from './discord.js';
+import { discordFlow } from './genkit.js';
+
 
 async function main() {
     try {
-        const discordService = new DiscordService(async function* (message) {
-            const resp = patFlow.stream({
-                prompt: message.content,
-            });
+        const discordService = new DiscordService(async function* (message, root, history) {
+            const userId = discordService.User().id;
 
+            const historyMessages = constructHistoryMessage(userId, root, history);
+
+            const userPrompt = constructUserPrompt(message, historyMessages);
+
+            const resp = discordFlow.stream({
+                botUserId: discordService.User().id,
+                prompt: userPrompt.content.map((c) => `${c.text}`),
+                messages: historyMessages,
+            });
             yield await resp.output;
         });
         await discordService.login();
