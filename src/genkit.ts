@@ -1,5 +1,5 @@
 import { googleAI } from '@genkit-ai/google-genai';
-import { genkit, z, type DynamicResourceAction, type ToolAction } from 'genkit';
+import { genkit, z, type DynamicResourceAction, type ToolAction, Document } from 'genkit';
 import { createMcpHost } from '@genkit-ai/mcp';
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -14,6 +14,30 @@ async function getToolsAndResources(): Promise<{ tools: Array<ToolAction>, resou
     const resources = await host.getActiveResources(ai);
 
     return { tools, resources };
+}
+async function loadDocuments(): Promise<Document[]> {
+    const documentsDir = path.join(process.cwd(), 'documents');
+    let docs: Document[] = [];
+
+    try {
+        const files = await fs.readdir(documentsDir);
+        docs = await Promise.all(
+            files.map(async (file: string) => {
+                const filePath = path.join(documentsDir, file);
+                const stats = await fs.stat(filePath);
+                if (stats.isFile()) {
+                    const content = await fs.readFile(filePath, 'utf-8');
+                    console.log("load document: ", file);
+                    return Document.fromText(content, { fileName: file });
+                }
+                return null;
+            })
+        ).then((results: (Document | null)[]) => results.filter((d): d is Document => d !== null));
+    } catch (error) {
+        console.warn("Error reading documents folder:", error);
+    }
+
+    return docs;
 }
 
 export const petFlow = ai.defineFlow(
@@ -54,7 +78,8 @@ export const discordFlow = ai.defineFlow(
         }, {
             ... await getToolsAndResources(),
             toolChoice: 'auto',
-            messages: input.messages
+            messages: input.messages,
+            docs: await loadDocuments(),
         });
         return (await response).text;
     },
