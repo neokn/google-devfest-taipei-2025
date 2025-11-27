@@ -1,23 +1,21 @@
 import 'dotenv/config';
-import { googleAI } from '@genkit-ai/google-genai';
-import { genkit, z } from 'genkit';
+import { DiscordService } from './discord.js';
+import { patFlow } from './genkit.js';
 
-const ai = genkit({
-    plugins: [googleAI()],
-});
+async function main() {
+    try {
+        const discordService = new DiscordService(async function* (message) {
+            const resp = patFlow.stream({
+                prompt: message.content,
+            });
 
-const patFlow = ai.defineFlow(
-    {
-        name: "patFlow",
-        inputSchema: z.object({ prompt: z.string() }),
-        outputSchema: z.string(),
-    },
-    async ({ prompt }) => {
-
-        const { response } = ai.prompt('cat').stream({
-            prompt: prompt,
+            yield await resp.output;
         });
+        await discordService.login();
+    } catch (error) {
+        console.error("Failed to start application:", error);
+        process.exit(1);
+    }
+}
 
-        return (await response).text;
-    },
-);
+main().catch(console.error);
