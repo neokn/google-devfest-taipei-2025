@@ -6,7 +6,7 @@
 - [建立 Discord Bot](#建立-Discord-Bot)
 - [設定 Discord Bot Token](#設定-Discord-Bot-Token)
 - [將 Bot 加入你的 Server](#將-Bot-加入你的-Server)
-- [啟動 Genkit + Discord](#啟動-Genkit-Discord)
+- [啟動 Genkit + Discord](#啟動-Genkit--Discord)
 - [開始對話](#開始對話)
 
 ## 環境設置
