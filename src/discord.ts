@@ -1,11 +1,59 @@
-import { Client, Events, GatewayIntentBits, Message, User } from "discord.js";
+import { Client, Events, GatewayIntentBits, Message, User, Collection } from "discord.js";
+
+export function constructUserPrompt(message: Message<boolean>, historyMessages: Array<{ role: "model" | "user", content: Array<{ text: string }> }> = []): { role: "user", content: Array<{ text: string }> } {
+    let userPrompt: { role: "user", content: Array<{ text: string }> } = {
+        role: 'user' as const,
+        content: []
+    };
+
+    if (historyMessages[historyMessages.length - 1]?.role === 'user') {
+        userPrompt = historyMessages.pop()! as { role: "user", content: Array<{ text: string }> };
+        userPrompt.content.push({ text: `${message.author.id}@${message.createdTimestamp}: ${message.content}  \n` });
+    } else {
+        userPrompt.content.push({ text: `${message.author.id}@${message.createdTimestamp}: ${message.content}  \n` });
+    }
+
+    return userPrompt;
+}
+
+export function constructHistoryMessage(userId: string, root?: Message<boolean>, history?: Array<Message<boolean>>): Array<{ role: "model" | "user", content: Array<{ text: string }> }> {
+
+    const historyMessages: Array<{ role: "model" | "user", content: Array<{ text: string }> }> = history?.map((m) => {
+        if (m.author.id === userId) {
+            return {
+                role: 'model' as const,
+                content: [{ text: `${m.content}` }]
+            };
+        } else {
+            return {
+                role: 'user' as const,
+                content: [{ text: `${m.author.id}@${m.createdTimestamp}: ${m.content}  \n` }]
+            };
+        }
+    }).reduce((acc, curr) => {
+        const last = acc[acc.length - 1];
+        if (last && last.role === curr.role) {
+            last.content.push(curr.content[0]!);
+        } else {
+            acc.push(curr);
+        }
+        return acc;
+    }, [] as Array<{ role: "model" | "user", content: Array<{ text: string }> }>) ?? [];
+    if (root) {
+        historyMessages.unshift({
+            role: 'user' as const,
+            content: [{ text: `${root.author.id}@${root.createdTimestamp}: ${root.content}  \n` }]
+        });
+    }
+    return historyMessages;
+}
 
 export class DiscordService {
     private client: Client;
     private ready: boolean = false;
-    private replyCallback: (message: Message<boolean>) => AsyncGenerator<string, void, unknown>;
+    private replyCallback: (message: Message<boolean>, root?: Message<boolean>, history?: Array<Message<boolean>>) => AsyncGenerator<string, void, unknown>;
 
-    constructor(_replyCallback: (message: Message<boolean>) => AsyncGenerator<string, void, unknown>) {
+    constructor(_replyCallback: (message: Message<boolean>, root?: Message<boolean>, history?: Array<Message<boolean>>) => AsyncGenerator<string, void, unknown>) {
         this.replyCallback = _replyCallback;
         this.client = new Client({
             intents: [
@@ -38,7 +86,16 @@ export class DiscordService {
 
             try {
 
-                const reply = this.replyCallback(message);
+                let history: Collection<string, Message<boolean>> | undefined = undefined;
+                let root: Message<boolean> | undefined = undefined;
+                if (message.channel.isThread()) {
+                    history = await message.channel.messages.fetch({
+                        before: message.id,
+                    });
+                    root = await message.channel.messages.fetch(history.last()!.reference!.messageId!);
+                }
+
+                const reply = this.replyCallback(message, root, history?.map((m) => m));
 
                 // If already in a thread, reply there
                 if (message.channel.isThread()) {

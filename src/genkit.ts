@@ -20,3 +20,29 @@ export const petFlow = ai.defineFlow(
         return (await response).text;
     },
 );
+
+export const discordFlow = ai.defineFlow(
+    {
+        name: "discordFlow",
+        inputSchema: z.object({
+            botUserId: z.string(),
+            prompt: z.array(z.string()),
+            messages: z.array(z.object({
+                role: z.union([z.literal("model"), z.literal("user")]),
+                content: z.array(z.object({
+                    text: z.string(),
+                })),
+            }))
+        }),
+        outputSchema: z.string(),
+    },
+    async (input) => {
+        const { response } = ai.prompt('discord').stream({
+            botUserId: input.botUserId,
+            prompt: input.prompt,
+        }, {
+            messages: input.messages
+        });
+        return (await response).text;
+    },
+);
