@@ -24,7 +24,7 @@ export const petFlow = ai.defineFlow(
     },
     async ({ prompt }) => {
 
-        const { response } = ai.prompt('pet').stream({
+        const { response } = ai.prompt('cat').stream({
             prompt: prompt,
         });
 
