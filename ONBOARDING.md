@@ -20,6 +20,9 @@
 如果還沒有 VSCode 可以到 [VSCode](https://code.visualstudio.com/) 下載  
 或是你想要試試 Google Antigravity 可以到 [Google Antigravity](https://antigravity.google/) 下載
 
+> 如果你是 Windows 但還沒裝過 git  
+> 可以到 [Git](https://git-scm.com/install/windows) 下載安裝
+
 #### 複製 Git 存放庫
 
 > https://github.com/neokn/google-devfest-taipei-2025
