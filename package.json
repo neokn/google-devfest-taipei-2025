@@ -9,6 +9,7 @@
         "dev": "genkit start -- tsx --watch src/index.ts"
     },
     "dependencies": {
+        "@genkit-ai/express": "^1.25.0",
         "@genkit-ai/google-genai": "^1.24.0",
         "@genkit-ai/mcp": "^1.24.0",
         "discord.js": "^14.25.1",

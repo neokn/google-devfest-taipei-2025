@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@genkit-ai/express':
+        specifier: ^1.25.0
+        version: 1.25.0(express@5.1.0)(genkit@1.24.0(@google-cloud/firestore@7.11.6)(firebase-admin@13.6.0))
       '@genkit-ai/google-genai':
         specifier: ^1.24.0
         version: 1.24.0(genkit@1.24.0(@google-cloud/firestore@7.11.6)(firebase-admin@13.6.0))
@@ -278,6 +281,12 @@ packages:
 
   '@genkit-ai/core@1.24.0':
     resolution: {integrity: sha512-JGmwdcC066OpbwShXeOOwvinj9b4yA0BKfKjPrVqqbWt9hvu81I60UNNiZC5y8dx+TvEhdEPUAXRvoOup2vC0w==}
+
+  '@genkit-ai/express@1.25.0':
+    resolution: {integrity: sha512-+12UAgZX73BpK3j3Huw2IncAxQ8FU9YRHD96whtfn1iBk1tpgXoQUzcQcD0SvZZPgFZLQpCGRA2PWZb4AwHBQg==}
+    peerDependencies:
+      express: ^4.21.1
+      genkit: ^1.25.0
 
   '@genkit-ai/firebase@1.24.0':
     resolution: {integrity: sha512-6DZ612qNV4OUsAa0L40gYx0rIzcANAjv3u9R08wGK/twdOvANJuMOUWBRTIVPA0IZL2WiHLcm6Ss+GOdZOdvpg==}
@@ -2964,6 +2973,15 @@ snapshots:
       - firebase
       - firebase-admin
       - genkit
+      - supports-color
+
+  '@genkit-ai/express@1.25.0(express@5.1.0)(genkit@1.24.0(@google-cloud/firestore@7.11.6)(firebase-admin@13.6.0))':
+    dependencies:
+      body-parser: 1.20.3
+      cors: 2.8.5
+      express: 5.1.0
+      genkit: 1.24.0(@google-cloud/firestore@7.11.6)(firebase-admin@13.6.0)
+    transitivePeerDependencies:
       - supports-color
 
   '@genkit-ai/firebase@1.24.0(@google-cloud/firestore@7.11.6)(firebase-admin@13.6.0)(genkit@1.24.0(@google-cloud/firestore@7.11.6)(firebase-admin@13.6.0))':
