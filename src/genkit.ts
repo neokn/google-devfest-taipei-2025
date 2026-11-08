@@ -46,12 +46,22 @@ export const petFlow = ai.defineFlow(
         inputSchema: z.object({ prompt: z.string() }),
         outputSchema: z.string(),
     },
-    async ({ prompt }) => {
+    async ({ prompt }, { sendChunk }) => {
 
-        const { response } = ai.prompt('cat').stream({
-            prompt: prompt,
+        // read kim json and put to messages
+        const kimJson = JSON.parse(await fs.readFile(path.join(process.cwd(), 'kim.json'), 'utf-8'));
+        const { response, stream } = ai.prompt('discord').stream({
+            botUserId: "Kim",
+            prompt: [prompt],
+        }, {
+            messages: kimJson.messages,
+            docs: await loadDocuments(),
         });
-
+        for await (const chunk of stream) {
+            if (chunk.reasoning) {
+                sendChunk(chunk.reasoning);
+            }
+        }
         return (await response).text;
     },
 );

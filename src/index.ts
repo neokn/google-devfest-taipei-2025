@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { constructHistoryMessage, constructUserPrompt, DiscordService } from './discord.js';
-import { discordFlow } from './genkit.js';
+import { discordFlow, petFlow } from './genkit.js';
+import { expressHandler } from '@genkit-ai/express';
+import express from 'express';
 
 async function main() {
     try {
@@ -25,6 +27,14 @@ async function main() {
             yield await resp.output;
         });
         await discordService.login();
+        const app = express();
+        app.use(express.json());
+
+        app.post('/petFlow', expressHandler(petFlow));
+
+        app.listen(8080, () => {
+            console.log('Express server listening on port 8080');
+        });
     } catch (error) {
         console.error("Failed to start application:", error);
         process.exit(1);

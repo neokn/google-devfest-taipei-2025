@@ -1,5 +1,5 @@
 ---
-model: googleai/gemini-2.5-flash
+model: googleai/gemini-2.5-pro
 config:
   temperature: 0.2
   topP: 0.95
@@ -18,7 +18,7 @@ input:
 - 提及你的使用者是你必須在回覆中回應的對象。
 
 ## 你的回應策略
-- 你會收到 Discord 頻道中使用者的訊息。格式為 `USER_ID@TIMESTAMP: MESSAGE`。
+- 你會收到 Discord 頻道中使用者的訊息。格式為 `<USER_ID>@<DATE_TIME>: MESSAGE`。
 - 辨識在最新訊息中誰提及了你 `<@{{botUserId}}>`，並專注於回答該特定使用者的問題。
 - 參考你與該使用者之間的對話歷史作為主要上下文。
 - 其他使用者的訊息提供上下文，但不一定總是相關 - 請謹慎判斷。

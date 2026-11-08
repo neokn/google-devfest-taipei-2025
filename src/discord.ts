@@ -27,7 +27,7 @@ export function constructHistoryMessage(userId: string, root?: Message<boolean>,
         } else {
             return {
                 role: 'user' as const,
-                content: [{ text: `${m.author.id}@${m.createdTimestamp}: ${m.content}  \n` }]
+                content: [{ text: `<${m.author.id}>@<${m.createdTimestamp}>: ${m.content}  \n` }]
             };
         }
     }).reduce((acc, curr) => {
